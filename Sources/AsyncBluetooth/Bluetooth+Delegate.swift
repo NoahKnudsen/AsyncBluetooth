@@ -14,8 +14,8 @@ extension Bluetooth {
         let didUpdateState = CurrentValueSubject<CBManagerState, Never>(.unknown)
         let didUpdateAuthorization = PassthroughSubject<CBManagerAuthorization, Never>()
         
-        private var discoveryContinutations: [AsyncStream<DiscoveredPeripheral>.Continuation] = []
-        private var connectionContinutations: [AsyncStream<ConnectionUpdate>.Continuation] = []
+        var discoveryContinutations: [AsyncThrowingStream<DiscoveredPeripheral, Error>.Continuation] = []
+        var connectionContinutations: [AsyncStream<ConnectionUpdate>.Continuation] = []
         
         weak var manager: Bluetooth?
     }
@@ -38,15 +38,6 @@ extension Bluetooth.Delegate {
 // MARK: Discovering Peripherals
 
 extension Bluetooth.Delegate {
-    
-    func discoveries(_ build: @escaping () -> Void) -> AsyncStream<DiscoveredPeripheral> {
-        AsyncStream<DiscoveredPeripheral> { continuation in
-            self.discoveryContinutations.append(continuation)
-            Task {
-                build()
-            }
-        }
-    }
     
     func stopDiscoveryScan() {
         for cont in discoveryContinutations {

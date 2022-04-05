@@ -13,8 +13,6 @@ public class Bluetooth {
 
     public var isScanning: Bool { manager.isScanning ?? false }
    
-    private var discoveryContinutations: [AsyncThrowingStream<DiscoveredPeripheral, Error>.Continuation] = []
-    
     public init() {
         let delegate = Delegate()
         self.delegate = delegate
@@ -100,28 +98,15 @@ extension Bluetooth {
             guard manager.state == .poweredOn else {
                 throw BluetoothError.notPoweredOn
             }
+    
+            self.delegate.discoveryContinutations.append(continuation)
             
-            self.discoveryContinutations.append(continuation)
-            
-            let discoveries = self.delegate.discoveries{
-                manager.scanForPeripherals(withServices: serviceIds, options: nil)         
-            }
-            
-            Task {
-                for await discovery in discoveries{
-                    continuation.yield(discovery)
-                }
-                continuation.finish()
-            }
+            manager.scanForPeripherals(withServices: serviceIds, options: nil)
         }
     }
     
     public func stopDiscovering() {
         manager.wrapped?.stopScan()
-        for cont in discoveryContinutations {
-            cont.finish()
-        }
-        discoveryContinutations = []
         delegate.stopDiscoveryScan()
     }
 }
