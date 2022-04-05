@@ -72,6 +72,18 @@ extension BluetoothPublishersTests {
         
         XCTAssertTrue(actual.count == 2)
     }
+    
+    func test_discover_notPoweredOn_error() async {
+        
+        mock.state = .poweredOff
+        
+        do {
+            _ = try await self.bluetooth.discoverPeripherals().first{_ in true}
+            XCTFail("Should throw before reaching here")
+        } catch {
+            XCTAssertEqual(error as? BluetoothError, BluetoothError.notPoweredOn)
+        }
+    }
 }
 
 extension BluetoothPublishersTests {

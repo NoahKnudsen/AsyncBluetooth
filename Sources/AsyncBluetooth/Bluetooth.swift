@@ -2,7 +2,7 @@
 //  Created by Noah Knudsen on 04/04/2022.
 //
 
-import CoreBluetooth
+@_exported import CoreBluetooth
 import Combine
 
 public class Bluetooth {
@@ -73,8 +73,13 @@ extension Bluetooth {
     {
         AsyncThrowingStream<T, Error> { continuation in
             Task {
-                let manager = try await assertPermissions()
-                try await build(continuation, manager)
+                do {
+                    let manager = try await assertPermissions()
+                    try await build(continuation, manager)
+                }
+                catch {
+                    continuation.finish(throwing: error)
+                }
             }
         }
     }
@@ -106,6 +111,7 @@ extension Bluetooth {
                 for await discovery in discoveries{
                     continuation.yield(discovery)
                 }
+                continuation.finish()
             }
         }
     }
@@ -116,6 +122,7 @@ extension Bluetooth {
             cont.finish()
         }
         discoveryContinutations = []
+        delegate.stopDiscoveryScan()
     }
 }
 

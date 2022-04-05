@@ -38,7 +38,7 @@ extension DiscoveredPeripheral {
         }
     }
     
-    init(_ mock: Mock, manager: Bluetooth? = nil) {
+    public init(_ mock: Mock, manager: Bluetooth? = nil) {
         self.peripheral = Peripheral(mock.peripheral, manager)
         self.advertisementData = mock.advertisementData
         self.rssi = mock.rssi

@@ -61,6 +61,7 @@ extension Bluetooth.Mock {
     
     public func stopScan() {
         isScanning = false
+        delegate?.stopDiscoveryScan()
     }
 }
 
