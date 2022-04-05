@@ -17,7 +17,7 @@ public class Peripheral {
         self.manager = manager
     }
     
-    func connect() async throws {
+    public func connect() async throws {
         guard let manager = manager else { throw BluetoothError.deallocation }
         try await manager.connect(to: self)
     }

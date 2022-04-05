@@ -108,8 +108,12 @@ extension BluetoothPublishersTests {
         
         wait(for: [completed], timeout: 2)
         XCTAssertEqual(targetPeripheral.state, .connected)
-        
     }
+}
+
+extension CBUUID {
+    
+    static var targetServices: [CBUUID] { [] }
 }
 
 final class BluetoothPublishersTests: XCTestCase {
